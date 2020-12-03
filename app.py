@@ -37,9 +37,18 @@ class PetModel(db.Model):
     #         'is_checked_in':self.is_checked_in
     #     }
 
-@app.route('/pet', methods=['GET'])
+@app.route('/pet', methods=['POST', 'GET'])
 def pet_get():
-    if request.method == 'GET':
+    if request.method == 'POST':
+        if request.is_json:
+            data = request.get_json()
+            new_pet = PetModel(name=data['name'], breed=data['breed'], color=data['color'], is_checked_in=data['is_checked_in'])
+            db.session.add(new_pet)
+            db.session.commit()
+            return {"message": f"pet {new_pet.name} has been birthed, congrats"}
+        else:
+            return {"error": "baby pet didn't make it, F in the chat"}
+    elif request.method == 'GET':
         pets = PetModel.query.all()
         results = [
             {   "id": pet.id,
@@ -52,7 +61,6 @@ def pet_get():
     return {"pets": results}
 
 
-    
 
 app.config['DEBUG'] = True
 
