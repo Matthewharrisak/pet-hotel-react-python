@@ -41,7 +41,7 @@ class PetModel(db.Model):
         self.breed = breed
         self.color = color
         self.is_checked_in = is_checked_in
-        self.owner_id
+        self.owner_id = owner_id
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -68,15 +68,8 @@ class PetModel(db.Model):
 #         else:
 #             return {"error": "baby pet didn't make it, F in the chat"}
 #     elif request.method == 'GET':
-#         pets = PetModel.query.all()
-        # results = [
-        #     {   "id": pet.id,
-        #         "name": pet.name,
-        #         "breed": pet.breed,
-        #         "color": pet.color,
-        #         "is_checked_in": pet.is_checked_in,
-        #         "owner_id": pet.owner_id
-        #     } for pet in pets]
+        # pets = PetModel.query.all()
+
         
 #     return {"pets": results}
 
@@ -92,11 +85,24 @@ def pet_get():
         else:
             return {"error": "baby pet didn't make it, F in the chat"}
     elif request.method == 'GET':
-        results = session.query(PetModel, OwnerModel).join(OwnerModel).all()
+        pets = PetModel.query.all()
+        pet_results = [
+            {   "id": pet.id,
+                "name": pet.name,
+                "breed": pet.breed,
+                "color": pet.color,
+                "is_checked_in": pet.is_checked_in,
+                "owner_id": pet.owner_id
+            } for pet in pets]
+        results = session.query(PetModel).join(OwnerModel).all()
+        for row in results:
+            print(row)
+
+        
         # for row in result:
             
         
-    return {"pets": results}
+    return  {"pets": pet_results , "owner": results} 
 
  
 #########
